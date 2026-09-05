@@ -40,35 +40,116 @@
   }
 
   function overridePlayableSprites() {
+    // 24x24: rounder faces, clearer kimono collars/sleeves/obi, and stronger silhouettes.
     const HUNTER = [
-      '..hhhhhhhhhh....', '.hhhhhhhhhhhh...', 'hhhhhhhhhhhhhh..', '...ssssssss.....',
-      '..ssssssssss....', '..sseesssse.....', '...ssssssss.....', '.ppbbbbbttt.....',
-      'pppbbbbbbttt....', 'ppbbbbbbbbtt....', '.pbbccbbbbtt....', '..bbbbbbbbtt....',
-      '..kkb..bb.tt....', '.kkkk..bb.tt....', '..kk...bb.......', '................'
+      '........hhhhhhhh........',
+      '......hhhhhhhhhhhh......',
+      '....hhhhhhhhhhhhhhhh....',
+      '..hhhhhhhhhhhhhhhhhhhh..',
+      '.hhhhhhhhhhhhhhhhhhhhhh.',
+      '.....ssssssssssss.......',
+      '....ssssssssssssss......',
+      '...sssseesssseessss.....',
+      '...ssssssssssssssss.....',
+      '....ssssssssssssss......',
+      '.....bbbbbbbbb..........',
+      '....bbbvvvbbbbbt........',
+      '...bbbvvvvvbbbbtt.......',
+      '..ppbbbvvvvbbbttt.......',
+      '.pppbbbbbbbbbbbtt.......',
+      'ppppbbbbccbbbbbtt.......',
+      '.pppbbbbbbbbbbbtt.......',
+      '..ppbbbbbbbbbbbtt.......',
+      '....bbbbbbbbbb.tt.......',
+      '....bbbbb.bbbb.tt.......',
+      '....kkk....kkk.tt.......',
+      '...kkkk....kkkk.........',
+      '........................',
+      '........................'
     ];
     const RONIN = [
-      '......h.........', '.....hhh........', '....hhhhh.......', '....hshhhhhh....',
-      '...ssseessss....', '....ssssssss....', '....mmmmmmm.....', '...mbbbbbbm.....',
-      '..mbbbbbbbbt....', '..bbbbbbbbbbt...', '..bbbbbbbbbbt...', '...bbbbccbbb....',
-      '...bbbbbbbb.....', '....kk..bb......', '...kkk..bb......', '................'
+      '..........h.............',
+      '.........hhh............',
+      '........hhhhh...........',
+      '.......hhhhhhh..........',
+      '......hhh...hhh.........',
+      '.....hhhhhhhhhhhh.......',
+      '....ssssssssssssss......',
+      '...ssssssssssssssss.....',
+      '...sssseesssseessss.....',
+      '...ssssssssssssssss.....',
+      '....ssssssssssssss......',
+      '....mmmmmmmmmmmm........',
+      '...mbbbbbbbbbbbbm.......',
+      '..mbbbbvvvbbbbbbbm.t....',
+      '.mbbbbbvvvvvbbbbbbmtt...',
+      '.bbbbbbvvvvvbbbbbbbtt...',
+      '.bbbbbbbbbbbbbbbbbbtt...',
+      '..bbbbbbccccbbbbbbtt....',
+      '..bbbbbbbbbbbbbbbbtt....',
+      '...bbbbbb..bbbbbb.tt....',
+      '....kkkk....kkkk..tt....',
+      '...kkkkk....kkkkk.......',
+      '........................',
+      '........................'
     ];
     const FARMER = [
-      '.....cccccc.....', '....cccccccc....', '...ccsssssscc...', '...cssseesscc...',
-      '....ssssssss....', '....gggggg......', '...gggggggg.....', '...gggggggg.....',
-      '....cccccccc....', '...cccbbbbccc...', '...cccbggboccc..', '....cccbbbbcc...',
-      '.....ccc.cc.....', '....kk...kk.....', '................', '................'
+      '........cccccccc........',
+      '......cccccccccccc......',
+      '.....cccssssssssccc.....',
+      '....ccsssssssssssscc....',
+      '....csssseesssseessc....',
+      '....csssssssssssssssc...',
+      '.....ssssssssssssss.....',
+      '......ssssssssssss......',
+      '......gggggggggg........',
+      '.....gggvvvvggggg.......',
+      '....gggvvvvvvggggg......',
+      '....gggggggggggggg......',
+      '.....aaaaaaaaaaaa.......',
+      '....aaaabbbbbbaaaa......',
+      '....aaabbbbbbbbaaa......',
+      '.....aabbbogbbbaa.......',
+      '......abbbbbbbba........',
+      '.......aaaaaa...........',
+      '.......cc..cc...........',
+      '......ccc..ccc..........',
+      '......kk....kk..........',
+      '.....kkk....kkk.........',
+      '........................',
+      '........................'
     ];
     const YAMAOTOKO = [
-      '....cccccccc....', '...cddddddddc...', '...ddssssssdd...', '..dddseessddd...',
-      '..ddddddddddd...', '...rrrrrrrr.....', '..rrbbbbbbrrt...', '..rbbbbbbbbtt...',
-      '..bbbbbbbbbbtt..', '..bbppppppbbtt..', '...bbbbbbbbbb...', '...bbbbbbbbbb...',
-      '..kkkkk..kkkk...', '..kkkk....kkk...', '................', '................'
+      '......dddddddddddd......',
+      '.....dddddddddddddd.....',
+      '....dddccccccccdddd.....',
+      '...dddssssssssssdddd....',
+      '...ddsssseesssseessdd...',
+      '...ddssssssssssssssdd...',
+      '...dddddddddddddddddd...',
+      '....dddrrrrrrrrdddd.....',
+      '...rrrbbbbbbbbbbrrr.....',
+      '..rrbbbbvvvvbbbbbbrrt...',
+      '.rrbbbbvvvvvvbbbbbbrrt..',
+      '.rbbbbbbbbbbbbbbbbbbrrt.',
+      '.bbbbppppppppppbbbbbbtt.',
+      'bbbbppppppppppppbbbbttt.',
+      'bbbbbbbbbbbbbbbbbbbbttt.',
+      '.bbbbbbbbbbbbbbbbbb.ttt.',
+      '..bbbbbbbbbbbbbbbb..tt..',
+      '...bbbbbbbbbbbbbb.......',
+      '....bbbb....bbbb........',
+      '...kkkkk....kkkkk.......',
+      '..kkkkkk....kkkkkk......',
+      '........................',
+      '........................',
+      '........................'
     ];
 
-    const hunterPal = { h: '#d9c387', s: '#fbf9f4', e: '#1e1a16', b: '#6e7f90', c: '#506070', k: '#2a2a2a', t: '#6c4b2a', p: '#c6b086' };
-    const roninPal = { h: '#191514', s: '#faf8f2', e: '#1b1714', b: '#3e4045', c: '#575963', m: '#7f635f', k: '#2b2521', t: '#2f2b2d' };
-    const farmerPal = { c: '#ece6d9', s: '#fbf9f4', e: '#1c1815', g: '#a7b59a', b: '#b79261', o: '#c98d57', k: '#2c2621' };
-    const yamaPal = { c: '#8d968a', d: '#221d19', s: '#fbf9f4', e: '#1a1715', r: '#8d7854', b: '#4a4037', p: '#b8a27a', k: '#3a3129', t: '#5d4630' };
+    const hunterPal = { h: '#d9c387', s: '#fbf9f4', e: '#1e1a16', b: '#6e7f90', v: '#d8e0e4', c: '#4f6170', k: '#2a2a2a', t: '#6c4b2a', p: '#c6b086' };
+    const roninPal = { h: '#191514', s: '#faf8f2', e: '#1b1714', b: '#3e4045', v: '#ece7dd', c: '#6b625a', m: '#7f635f', k: '#2b2521', t: '#3a302b' };
+    const farmerPal = { c: '#ece6d9', s: '#fbf9f4', e: '#1c1815', g: '#a7b59a', v: '#f0eadc', a: '#e9dfcb', b: '#b79261', o: '#c98d57', k: '#2c2621' };
+    const yamaPal = { c: '#8d968a', d: '#221d19', s: '#fbf9f4', e: '#1a1715', r: '#8d7854', b: '#4a4037', v: '#d8d0bf', p: '#b8a27a', k: '#3a3129', t: '#5d4630' };
 
     SPR.hunter = mkSprite2(HUNTER, hunterPal);
     SPR.ronin = mkSprite2(RONIN, roninPal);
@@ -152,10 +233,10 @@
     ctx.fillText('GEKOKUJO OFFLINE', W / 2, 218);
     ctx.restore();
     const bob = Math.floor(G.frame / 14) % 2;
-    drawSpr(SPR.hunter, 50, 300 - bob, 1, 1.8);
-    drawSpr(SPR.ronin, 110, 300 - (1 - bob), 1, 1.85);
-    drawSpr(SPR.farmer, 168, 300 - bob, 1, 1.8);
-    drawSpr(SPR.yamaotoko, 225, 300 - (1 - bob), 1, 1.8);
+    drawSpr(SPR.hunter, 46, 300 - bob, 1, 1.35);
+    drawSpr(SPR.ronin, 106, 300 - (1 - bob), 1, 1.38);
+    drawSpr(SPR.farmer, 166, 300 - bob, 1, 1.35);
+    drawSpr(SPR.yamaotoko, 224, 300 - (1 - bob), 1, 1.35);
     button('はじめる', W / 2 - 54, 332, 108, 30, G.sel === 0);
     button('遊び方', 36, 394, 88, 24, G.sel === 1);
     button('ランキング', W - 124, 394, 88, 24, G.sel === 2);
