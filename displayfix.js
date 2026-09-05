@@ -1,4 +1,4 @@
-/* Handwritten UI + sumi-ink title + HiDPI fix + unique playable character sprites */
+/* Handwritten UI + sumi-ink title + HiDPI fix + playable sprites matched to the reference lineup */
 (() => {
   const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
   const nativeSetTransform = ctx.setTransform.bind(ctx);
@@ -40,88 +40,40 @@
   }
 
   function overridePlayableSprites() {
-    const FARMER = [
-      '....hhhhhhhh....',
-      '..hhhhhhhhhhhh..',
-      'hhhhhhhhhhhhhhhh',
-      '...hhhhhhhhhh...',
-      '....ssssssss....',
-      '....seessees....',
-      '.....ssssss.....',
-      '.....rrrrrr.....',
-      '....bbbbbbbb....',
-      '...bbbbbbbbbb...',
-      '..bbbbwbbwbbb...',
-      '..bbbbbbbbbbbb..',
-      '...bbbbbbbbbb...',
-      '....bb.bbbb.....',
-      '....kk..bbkk....',
-      '...kkk..bbkkk...'
-    ];
     const HUNTER = [
-      '......hhhh......',
-      '....hhhhhhhh....',
-      '...hhhhh.hhhh...',
-      '....hhhhhhhh....',
-      '....ssssssss....',
-      '....seessees....',
-      '.....ssssss.....',
-      '....rrrrrrrr....',
-      '....gggggg......',
-      '...gggggggg.w...',
-      '...gggggggg.w...',
-      '....gggggg..w...',
-      '....gggggg......',
-      '.....g..gg......',
-      '....kk..ggkk....',
-      '...kkk..ggkkk...'
-    ];
-    const YAMAOTOKO = [
-      '......rrrr......',
-      '.....rrrrrr.....',
-      '....hhhhh.h.....',
-      '....hhhhhhhh....',
-      '....ssssssss....',
-      '....seessees....',
-      '....ssssssss....',
-      '....bbbbbbbb....',
-      '...bbbbbbbbbb...',
-      '..bbbbbbbbbbbb..',
-      '..bbbbwwwwbbbb..',
-      '..bbbbbbbbbbbb..',
-      '...bbbbbbbbbb...',
-      '....bb.bbbb.....',
-      '...kkkk..kkkk...',
-      '..kkkkk..kkkkk..'
+      '..hhhhhhhhhh....', '.hhhhhhhhhhhh...', 'hhhhhhhhhhhhhh..', '...ssssssss.....',
+      '..ssssssssss....', '..sseesssse.....', '...ssssssss.....', '.ppbbbbbttt.....',
+      'pppbbbbbbttt....', 'ppbbbbbbbbtt....', '.pbbccbbbbtt....', '..bbbbbbbbtt....',
+      '..kkb..bb.tt....', '.kkkk..bb.tt....', '..kk...bb.......', '................'
     ];
     const RONIN = [
-      '......hhhh......',
-      '.....hhhhhh.....',
-      '......h..h......',
-      '....hhhhhhhh....',
-      '....ssssssss....',
-      '....seessees....',
-      '.....ssssss.....',
-      '....wwwwwwww....',
-      '...bbbbbbbbbb...',
-      '...bbbbbbbbbb...',
-      '..bbbbbbbbbbbkk.',
-      '..bbbbbbbbbbbkk.',
-      '...bbbbwwbbbb...',
-      '....bb.bbbb.....',
-      '....kk..bbkk....',
-      '...kkk..bbkkk...'
+      '......h.........', '.....hhh........', '....hhhhh.......', '....hshhhhhh....',
+      '...ssseessss....', '....ssssssss....', '....mmmmmmm.....', '...mbbbbbbm.....',
+      '..mbbbbbbbbt....', '..bbbbbbbbbbt...', '..bbbbbbbbbbt...', '...bbbbccbbb....',
+      '...bbbbbbbb.....', '....kk..bb......', '...kkk..bb......', '................'
+    ];
+    const FARMER = [
+      '.....cccccc.....', '....cccccccc....', '...ccsssssscc...', '...cssseesscc...',
+      '....ssssssss....', '....gggggg......', '...gggggggg.....', '...gggggggg.....',
+      '....cccccccc....', '...cccbbbbccc...', '...cccbggboccc..', '....cccbbbbcc...',
+      '.....ccc.cc.....', '....kk...kk.....', '................', '................'
+    ];
+    const YAMAOTOKO = [
+      '....cccccccc....', '...cddddddddc...', '...ddssssssdd...', '..dddseessddd...',
+      '..ddddddddddd...', '...rrrrrrrr.....', '..rrbbbbbbrrt...', '..rbbbbbbbbtt...',
+      '..bbbbbbbbbbtt..', '..bbppppppbbtt..', '...bbbbbbbbbb...', '...bbbbbbbbbb...',
+      '..kkkkk..kkkk...', '..kkkk....kkk...', '................', '................'
     ];
 
-    const farmerPal = { h: '#d2b25a', s: '#f2c79a', e: '#222', b: '#496fa9', k: '#60452d', r: '#8b5a2b', w: '#d9edf6' };
-    const hunterPal = { h: '#3b2d20', s: '#e8b890', e: '#222', g: '#3f7d48', k: '#2b2b2b', r: '#7f2d1f', w: '#9c7b55' };
-    const yamaPal   = { h: '#6b4a28', s: '#d7a172', e: '#222', b: '#914436', k: '#432f20', r: '#b22f2f', w: '#d3c2a1' };
-    const roninPal  = { h: '#1d1a1c', s: '#f0c79f', e: '#222', b: '#5e6279', k: '#2a2a31', w: '#e6e4df' };
+    const hunterPal = { h: '#d9c387', s: '#fbf9f4', e: '#1e1a16', b: '#6e7f90', c: '#506070', k: '#2a2a2a', t: '#6c4b2a', p: '#c6b086' };
+    const roninPal = { h: '#191514', s: '#faf8f2', e: '#1b1714', b: '#3e4045', c: '#575963', m: '#7f635f', k: '#2b2521', t: '#2f2b2d' };
+    const farmerPal = { c: '#ece6d9', s: '#fbf9f4', e: '#1c1815', g: '#a7b59a', b: '#b79261', o: '#c98d57', k: '#2c2621' };
+    const yamaPal = { c: '#8d968a', d: '#221d19', s: '#fbf9f4', e: '#1a1715', r: '#8d7854', b: '#4a4037', p: '#b8a27a', k: '#3a3129', t: '#5d4630' };
 
-    SPR.farmer = mkSprite2(FARMER, farmerPal);
     SPR.hunter = mkSprite2(HUNTER, hunterPal);
-    SPR.yamaotoko = mkSprite2(YAMAOTOKO, yamaPal);
     SPR.ronin = mkSprite2(RONIN, roninPal);
+    SPR.farmer = mkSprite2(FARMER, farmerPal);
+    SPR.yamaotoko = mkSprite2(YAMAOTOKO, yamaPal);
   }
   overridePlayableSprites();
 
@@ -187,11 +139,11 @@
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(34, 68); ctx.lineTo(W - 34, 68);
-    ctx.moveTo(28, 242); ctx.lineTo(W - 28, 242);
+    ctx.moveTo(28, 254); ctx.lineTo(W - 28, 254);
     ctx.stroke();
     ctx.restore();
-    txt('成り上がれ　下剋上を…', W / 2, 48, 12, '#4d443a', 'center', false);
-    sumiText('下剋上', W / 2, 132, 62, -0.05);
+    txt('成り上がれ　下剋上を…', W / 2, 46, 12, '#4d443a', 'center', false);
+    sumiText('下剋上', W / 2, 130, 62, -0.05);
     sumiText('オフライン', W / 2, 196, 30, 0.015);
     ctx.save();
     ctx.font = '10px "Yomogi", "Hiragino Sans", sans-serif';
@@ -200,13 +152,14 @@
     ctx.fillText('GEKOKUJO OFFLINE', W / 2, 218);
     ctx.restore();
     const bob = Math.floor(G.frame / 14) % 2;
-    drawSpr(SPR.hunter, W / 2 - 54, 294 - bob, 1, 2.1);
-    drawSpr(SPR.farmer, W / 2, 296 - (1 - bob), 1, 2.1);
-    drawSpr(SPR.ronin, W / 2 + 54, 294 - bob, 1, 2.1);
-    button('はじめる', W / 2 - 54, 326, 108, 30, G.sel === 0);
-    button('遊び方', 36, 392, 88, 24, G.sel === 1);
-    button('ランキング', W - 124, 392, 88, 24, G.sel === 2);
-    txt(isTouch ? 'タップで決定 / 縦持ち推奨' : 'Enter / Space で決定', W / 2, 444, 9, '#5b5147', 'center', false);
+    drawSpr(SPR.hunter, 50, 300 - bob, 1, 1.8);
+    drawSpr(SPR.ronin, 110, 300 - (1 - bob), 1, 1.85);
+    drawSpr(SPR.farmer, 168, 300 - bob, 1, 1.8);
+    drawSpr(SPR.yamaotoko, 225, 300 - (1 - bob), 1, 1.8);
+    button('はじめる', W / 2 - 54, 332, 108, 30, G.sel === 0);
+    button('遊び方', 36, 394, 88, 24, G.sel === 1);
+    button('ランキング', W - 124, 394, 88, 24, G.sel === 2);
+    txt(isTouch ? 'タップで決定 / 縦持ち推奨' : 'Enter / Space で決定', W / 2, 446, 9, '#5b5147', 'center', false);
   };
 
   drawHowto = function() {
