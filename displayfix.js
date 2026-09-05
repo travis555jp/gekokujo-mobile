@@ -1,4 +1,4 @@
-/* Handwritten UI + sumi-ink title + HiDPI fix */
+/* Handwritten UI + sumi-ink title + HiDPI fix + unique playable character sprites */
 (() => {
   const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
   const nativeSetTransform = ctx.setTransform.bind(ctx);
@@ -26,6 +26,105 @@
   const uiFont = (size) => `${size}px "Yomogi", "Hiragino Sans", "Yu Gothic", sans-serif`;
   const titleFont = (size) => `${size}px "Yuji Boku", "Hiragino Mincho ProN", "Yu Mincho", serif`;
 
+  function mkSprite2(rows, pal) {
+    const h = rows.length, w = rows[0].length;
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    const g = c.getContext('2d');
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const ch = rows[y][x];
+      if (ch === '.') continue;
+      g.fillStyle = pal[ch] || '#f0f';
+      g.fillRect(x, y, 1, 1);
+    }
+    return c;
+  }
+
+  function overridePlayableSprites() {
+    const FARMER = [
+      '....hhhhhhhh....',
+      '..hhhhhhhhhhhh..',
+      'hhhhhhhhhhhhhhhh',
+      '...hhhhhhhhhh...',
+      '....ssssssss....',
+      '....seessees....',
+      '.....ssssss.....',
+      '.....rrrrrr.....',
+      '....bbbbbbbb....',
+      '...bbbbbbbbbb...',
+      '..bbbbwbbwbbb...',
+      '..bbbbbbbbbbbb..',
+      '...bbbbbbbbbb...',
+      '....bb.bbbb.....',
+      '....kk..bbkk....',
+      '...kkk..bbkkk...'
+    ];
+    const HUNTER = [
+      '......hhhh......',
+      '....hhhhhhhh....',
+      '...hhhhh.hhhh...',
+      '....hhhhhhhh....',
+      '....ssssssss....',
+      '....seessees....',
+      '.....ssssss.....',
+      '....rrrrrrrr....',
+      '....gggggg......',
+      '...gggggggg.w...',
+      '...gggggggg.w...',
+      '....gggggg..w...',
+      '....gggggg......',
+      '.....g..gg......',
+      '....kk..ggkk....',
+      '...kkk..ggkkk...'
+    ];
+    const YAMAOTOKO = [
+      '......rrrr......',
+      '.....rrrrrr.....',
+      '....hhhhh.h.....',
+      '....hhhhhhhh....',
+      '....ssssssss....',
+      '....seessees....',
+      '....ssssssss....',
+      '....bbbbbbbb....',
+      '...bbbbbbbbbb...',
+      '..bbbbbbbbbbbb..',
+      '..bbbbwwwwbbbb..',
+      '..bbbbbbbbbbbb..',
+      '...bbbbbbbbbb...',
+      '....bb.bbbb.....',
+      '...kkkk..kkkk...',
+      '..kkkkk..kkkkk..'
+    ];
+    const RONIN = [
+      '......hhhh......',
+      '.....hhhhhh.....',
+      '......h..h......',
+      '....hhhhhhhh....',
+      '....ssssssss....',
+      '....seessees....',
+      '.....ssssss.....',
+      '....wwwwwwww....',
+      '...bbbbbbbbbb...',
+      '...bbbbbbbbbb...',
+      '..bbbbbbbbbbbkk.',
+      '..bbbbbbbbbbbkk.',
+      '...bbbbwwbbbb...',
+      '....bb.bbbb.....',
+      '....kk..bbkk....',
+      '...kkk..bbkkk...'
+    ];
+
+    const farmerPal = { h: '#d2b25a', s: '#f2c79a', e: '#222', b: '#496fa9', k: '#60452d', r: '#8b5a2b', w: '#d9edf6' };
+    const hunterPal = { h: '#3b2d20', s: '#e8b890', e: '#222', g: '#3f7d48', k: '#2b2b2b', r: '#7f2d1f', w: '#9c7b55' };
+    const yamaPal   = { h: '#6b4a28', s: '#d7a172', e: '#222', b: '#914436', k: '#432f20', r: '#b22f2f', w: '#d3c2a1' };
+    const roninPal  = { h: '#1d1a1c', s: '#f0c79f', e: '#222', b: '#5e6279', k: '#2a2a31', w: '#e6e4df' };
+
+    SPR.farmer = mkSprite2(FARMER, farmerPal);
+    SPR.hunter = mkSprite2(HUNTER, hunterPal);
+    SPR.yamaotoko = mkSprite2(YAMAOTOKO, yamaPal);
+    SPR.ronin = mkSprite2(RONIN, roninPal);
+  }
+  overridePlayableSprites();
+
   function sumiText(s, x, y, size, angle = 0) {
     ctx.save();
     ctx.translate(x, y);
@@ -33,17 +132,11 @@
     ctx.textAlign = 'center';
     ctx.textBaseline = 'alphabetic';
     ctx.font = titleFont(size);
-
-    const offsets = [
-      [-1.2, 0.6, 'rgba(0,0,0,0.16)'],
-      [0.8, -0.5, 'rgba(0,0,0,0.10)'],
-      [0, 0, '#16110d'],
-    ];
+    const offsets = [[-1.2, 0.6, 'rgba(0,0,0,0.16)'], [0.8, -0.5, 'rgba(0,0,0,0.10)'], [0, 0, '#16110d']];
     for (const [dx, dy, color] of offsets) {
       ctx.fillStyle = color;
       ctx.fillText(s, dx, dy);
     }
-
     ctx.globalAlpha = 0.18;
     ctx.lineWidth = Math.max(1, size / 26);
     ctx.strokeStyle = '#221a14';
@@ -89,7 +182,6 @@
 
   drawTitle = function() {
     drawPaperBg();
-
     ctx.save();
     ctx.strokeStyle = 'rgba(0,0,0,0.10)';
     ctx.lineWidth = 1;
@@ -98,24 +190,19 @@
     ctx.moveTo(28, 242); ctx.lineTo(W - 28, 242);
     ctx.stroke();
     ctx.restore();
-
     txt('成り上がれ　下剋上を…', W / 2, 48, 12, '#4d443a', 'center', false);
-
     sumiText('下剋上', W / 2, 132, 62, -0.05);
     sumiText('オフライン', W / 2, 196, 30, 0.015);
-
     ctx.save();
     ctx.font = '10px "Yomogi", "Hiragino Sans", sans-serif';
     ctx.fillStyle = '#4d443a';
     ctx.textAlign = 'center';
     ctx.fillText('GEKOKUJO OFFLINE', W / 2, 218);
     ctx.restore();
-
     const bob = Math.floor(G.frame / 14) % 2;
     drawSpr(SPR.hunter, W / 2 - 54, 294 - bob, 1, 2.1);
     drawSpr(SPR.farmer, W / 2, 296 - (1 - bob), 1, 2.1);
     drawSpr(SPR.ronin, W / 2 + 54, 294 - bob, 1, 2.1);
-
     button('はじめる', W / 2 - 54, 326, 108, 30, G.sel === 0);
     button('遊び方', 36, 392, 88, 24, G.sel === 1);
     button('ランキング', W - 124, 392, 88, 24, G.sel === 2);
@@ -166,6 +253,7 @@
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(() => {
       applyHiDPI();
+      overridePlayableSprites();
       if (typeof draw === 'function') draw();
     });
   }
