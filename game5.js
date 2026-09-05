@@ -45,10 +45,16 @@ function drawPaperBg() {
 function drawTitle() {
   drawPaperBg();
   ctx.fillStyle = '#111';
-  ctx.font = 'bold 18px serif'; ctx.textAlign = 'center'; ctx.fillText('成り上がれ 下剋上を…', W / 2, 74);
-  ctx.font = 'bold 58px serif'; ctx.fillText('下剋上', W / 2, 150);
-  ctx.font = 'bold 20px serif'; ctx.fillText('オンライン', W / 2, 184);
-  ctx.font = '10px "Courier New", monospace'; ctx.fillText('GEKOKUJO', W / 2, 200);
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'alphabetic';
+  ctx.font = '700 14px "Hiragino Mincho ProN", "Yu Mincho", serif';
+  ctx.fillText('成り上がれ 下剋上を…', W / 2, 62);
+  ctx.font = '700 52px "Hiragino Mincho ProN", "Yu Mincho", serif';
+  ctx.fillText('下剋上', W / 2, 142);
+  ctx.font = '700 24px "Hiragino Mincho ProN", "Yu Mincho", serif';
+  ctx.fillText('オンライン', W / 2, 194);
+  ctx.font = '700 11px "Hiragino Sans", "Yu Gothic", sans-serif';
+  ctx.fillText('GEKOKUJO ONLINE', W / 2, 214);
   const bob = Math.floor(G.frame / 14) % 2;
   drawSpr(SPR.hunter, W / 2 - 54, 284 - bob, 1, 2.2);
   drawSpr(SPR.farmer, W / 2, 286 - (1 - bob), 1, 2.2);
@@ -78,35 +84,37 @@ function drawSelect() {
 }
 function drawHowto() {
   drawPaperBg();
-  txt('遊び方', W / 2, 16, 20, '#111', 'center');
+  txt('遊び方', W / 2, 16, 22, '#111', 'center');
   const lines = [
-    '移動: WASD / 矢印キー / 左スティック',
-    '攻撃: Space / 右ボタン（押しっぱなし可）',
-    '鎌は近い敵に自動で飛ぶ',
-    '連続撃破でCOMBO → スコア倍率アップ',
-    '倒し続けてゲージMAXで下剋上モード',
-    '「！！」が出たら辻斬りが来る',
+    '移動: 矢印 / WASD / 左スティック',
+    '攻撃: Space / 右ボタン長押し',
+    '鎌は近い敵を自動で狙う',
+    'COMBOでスコア倍率アップ',
+    'ゲージMAXで下剋上モード',
+    '「！！」で辻斬り警告',
     '一定数倒すと代官が出現',
-    '白い鎌: 手数UP / 赤鎌: 威力UP',
-    '草鞋: 速度UP / おにぎり: 回復',
-    '御守り: 一時無敵'
+    '白鎌=手数UP / 赤鎌=威力UP',
+    '草鞋=速度UP / おにぎり=回復',
+    '御守り=一時無敵'
   ];
-  lines.forEach((l, i) => txt(l, 18, 56 + i * 28, 9, '#111'));
-  [['waraji', 30], ['onigiri', 82], ['kama', 134], ['akakama', 186], ['omamori', 238]].forEach(([k, x]) => drawSpr(SPR[k], x, 360, 1, 2));
+  lines.forEach((l, i) => txt(l, 16, 52 + i * 28, 11, '#111'));
+  [['waraji', 30], ['onigiri', 82], ['kama', 134], ['akakama', 186], ['omamori', 238]].forEach(([k, x]) => drawSpr(SPR[k], x, 352, 1, 2));
+  txt('草鞋  おにぎり  白鎌  赤鎌  御守り', W / 2, 382, 9, '#333', 'center');
   button('BACK', W / 2 - 50, 420, 100, 24, true);
 }
 function drawRanking() {
   drawPaperBg();
-  txt('ランキング TOP10', W / 2, 14, 18, '#111', 'center');
-  if (G.ranking.length === 0) txt('まだ記録がありません', W / 2, 210, 12, '#111', 'center');
+  txt('ランキング TOP10', W / 2, 14, 20, '#111', 'center');
+  if (G.ranking.length === 0) txt('まだ記録がありません', W / 2, 210, 13, '#111', 'center');
   G.ranking.forEach((r, i) => {
     const hl = G.result && r.date === G.result.date && r.score === G.result.score;
-    ctx.fillStyle = hl ? '#1f1a12' : (i % 2 ? '#f0ece2' : '#fffdfa'); ctx.fillRect(12, 48 + i * 34, W - 24, 28);
-    ctx.strokeStyle = '#111'; ctx.lineWidth = 1; ctx.strokeRect(12.5, 48.5 + i * 34, W - 25, 27);
-    txt((i + 1) + '位', 20, 56 + i * 34, 8, hl ? '#ffe040' : '#111');
-    txt(String(r.score), 58, 56 + i * 34, 9, hl ? '#ffe040' : '#111');
-    txt('C' + r.combo + ' / K' + r.kills, 126, 56 + i * 34, 8, hl ? '#ddd' : '#555');
-    txt(rankOf(r.score), W - 18, 56 + i * 34, 8, hl ? '#ffe040' : '#111', 'right');
+    const y = 46 + i * 34;
+    ctx.fillStyle = hl ? '#1f1a12' : (i % 2 ? '#f0ece2' : '#fffdfa'); ctx.fillRect(10, y, W - 20, 30);
+    ctx.strokeStyle = '#111'; ctx.lineWidth = 1; ctx.strokeRect(10.5, y + 0.5, W - 21, 29);
+    txt((i + 1) + '位', 18, y + 8, 10, hl ? '#ffe040' : '#111');
+    txt(String(r.score), 56, y + 8, 10, hl ? '#ffe040' : '#111');
+    txt('C' + r.combo, 130, y + 8, 9, hl ? '#ddd' : '#555');
+    txt(rankOf(r.score), W - 16, y + 8, 9, hl ? '#ffe040' : '#111', 'right');
   });
   button('BACK', W / 2 - 50, 420, 100, 24, true);
 }
