@@ -30,7 +30,7 @@ function gameOver() {
   G.state = 'gameover'; G.overT = 0; SFX.play('gameover');
   const entry = { score: G.score, combo: G.maxCombo, kills: G.kills, time: Math.floor(G.time / 60), stage: G.stage, chr: G.chr.name, date: Date.now() };
   const idx = RankingStore.add(entry);
-  G.result = { ...entry, rank: rankOf(G.score), est: estRank(G.score), place: idx };
+  G.result = { ...entry, rank: rankOf(G.score), est: estRank(G.score), place: idx, onlineStatus: G.onlineStatus };
 }
 
 /* ---- spawning ---- */

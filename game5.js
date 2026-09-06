@@ -102,19 +102,24 @@ function drawHowto() {
   txt('草鞋  おにぎり  白鎌  赤鎌  御守り', W / 2, 382, 9, '#333', 'center');
   button('BACK', W / 2 - 50, 420, 100, 24, true);
 }
+function rankingName(name) {
+  const value = String(name || '自分');
+  return value.length > 8 ? value.slice(0, 7) + '…' : value;
+}
 function drawRanking() {
   drawPaperBg();
-  txt('ランキング TOP10', W / 2, 14, 20, '#111', 'center');
-  if (G.ranking.length === 0) txt('まだ記録がありません', W / 2, 210, 13, '#111', 'center');
+  txt('ランキング TOP10', W / 2, 18, 20, '#111', 'center');
+  const status = G.rankingStatus === 'online' ? 'オンライン' : G.rankingStatus === 'loading' ? '読込中…' : G.rankingStatus === 'setup' ? '端末記録（オンライン未設定）' : '端末記録（通信できません）';
+  txt(status, W / 2, 42, 8, G.rankingStatus === 'online' ? '#287040' : '#805020', 'center');
+  if (G.ranking.length === 0) txt(G.rankingStatus === 'loading' ? '読み込んでいます…' : 'まだ記録がありません', W / 2, 210, 13, '#111', 'center');
   G.ranking.forEach((r, i) => {
-    const hl = G.result && r.date === G.result.date && r.score === G.result.score;
-    const y = 46 + i * 34;
+    const hl = G.result && ((G.result.onlineId && r.id === G.result.onlineId) || (r.date === G.result.date && r.score === G.result.score));
+    const y = 60 + i * 34;
     ctx.fillStyle = hl ? '#1f1a12' : (i % 2 ? '#f0ece2' : '#fffdfa'); ctx.fillRect(10, y, W - 20, 30);
     ctx.strokeStyle = '#111'; ctx.lineWidth = 1; ctx.strokeRect(10.5, y + 0.5, W - 21, 29);
     txt((i + 1) + '位', 18, y + 8, 10, hl ? '#ffe040' : '#111');
-    txt(String(r.score), 56, y + 8, 10, hl ? '#ffe040' : '#111');
-    txt('C' + r.combo, 130, y + 8, 9, hl ? '#ddd' : '#555');
-    txt(rankOf(r.score), W - 16, y + 8, 9, hl ? '#ffe040' : '#111', 'right');
+    txt(rankingName(r.name), 56, y + 8, 9, hl ? '#ffe040' : '#111');
+    txt(String(r.score), W - 16, y + 8, 10, hl ? '#ffe040' : '#111', 'right');
   });
   button('BACK', W / 2 - 50, 420, 100, 24, true);
 }
@@ -126,9 +131,12 @@ function drawGameOver() {
   const rows = [['SCORE', String(r.score)], ['最高コンボ', r.combo + ' COMBO'], ['撃破数', r.kills + ' 人'], ['プレイ時間', fmtTime(r.time * 60)], ['到達', 'STAGE ' + r.stage]];
   rows.forEach((row, i) => { if (t > 30 + i * 8) { txt(row[0], W / 2 - 8, 120 + i * 18, 9, '#ccc', 'right'); txt(row[1], W / 2 + 6, 120 + i * 18, 9, '#fff', 'left'); } });
   if (t > 80) {
-    txt('推定順位 ' + r.est.toLocaleString() + '位', W / 2, 226, 10, '#fff', 'center');
+    const rankText = r.onlinePlace ? 'オンライン ' + r.onlinePlace.toLocaleString() + '位' : '推定順位 ' + r.est.toLocaleString() + '位';
+    txt(rankText, W / 2, 226, 10, '#fff', 'center');
     txt('称号 ' + r.rank, W / 2, 244, 14, t % 20 < 10 ? '#ffe040' : '#fff', 'center');
     if (r.place >= 0) txt(r.place === 0 ? 'この端末で NEW RECORD!!' : 'この端末で ' + (r.place + 1) + '位', W / 2, 268, 9, '#80ff80', 'center');
+    const onlineText = r.onlineStatus === 'sending' ? 'オンライン送信中…' : r.onlineStatus === 'sent' ? 'オンライン登録済み' : r.onlineStatus === 'error' ? '送信失敗（端末には保存済み）' : 'オンラインランキング未設定';
+    txt(onlineText, W / 2, 292, 8, r.onlineStatus === 'sent' ? '#80ff80' : '#ddd', 'center');
   }
   if (t > 100) { button('RETRY', 30, 380, 90, 28, true); button('TITLE', 150, 380, 90, 28, false); }
 }

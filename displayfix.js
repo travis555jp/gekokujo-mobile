@@ -225,12 +225,12 @@
     ctx.restore();
     txt('成り上がれ　下剋上を…', W / 2, 46, 12, '#4d443a', 'center', false);
     sumiText('下剋上', W / 2, 130, 62, -0.05);
-    sumiText('オフライン', W / 2, 196, 30, 0.015);
+    sumiText('オンライン', W / 2, 196, 30, 0.015);
     ctx.save();
     ctx.font = '10px "Yomogi", "Hiragino Sans", sans-serif';
     ctx.fillStyle = '#4d443a';
     ctx.textAlign = 'center';
-    ctx.fillText('GEKOKUJO OFFLINE', W / 2, 218);
+    ctx.fillText('GEKOKUJO ONLINE', W / 2, 218);
     ctx.restore();
     const bob = Math.floor(G.frame / 14) % 2;
     drawSpr(SPR.hunter, 46, 300 - bob, 1, 1.35);
@@ -266,20 +266,21 @@
 
   drawRanking = function() {
     drawPaperBg();
-    txt('ランキング TOP10', W / 2, 14, 22, '#201810', 'center', false);
-    if (G.ranking.length === 0) txt('まだ記録がありません', W / 2, 210, 14, '#2b241b', 'center', false);
+    txt('ランキング TOP10', W / 2, 18, 22, '#201810', 'center', false);
+    const status = G.rankingStatus === 'online' ? 'オンライン' : G.rankingStatus === 'loading' ? '読込中…' : G.rankingStatus === 'setup' ? '端末記録（オンライン未設定）' : '端末記録（通信できません）';
+    txt(status, W / 2, 42, 9, G.rankingStatus === 'online' ? '#287040' : '#805020', 'center', false);
+    if (G.ranking.length === 0) txt(G.rankingStatus === 'loading' ? '読み込んでいます…' : 'まだ記録がありません', W / 2, 210, 14, '#2b241b', 'center', false);
     G.ranking.forEach((r, i) => {
-      const hl = G.result && r.date === G.result.date && r.score === G.result.score;
-      const y = 46 + i * 34;
+      const hl = G.result && ((G.result.onlineId && r.id === G.result.onlineId) || (r.date === G.result.date && r.score === G.result.score));
+      const y = 60 + i * 34;
       ctx.fillStyle = hl ? '#2f281d' : (i % 2 ? '#f2ebdf' : '#fffdfa');
       ctx.fillRect(10, y, W - 20, 30);
       ctx.strokeStyle = '#3a2f24';
       ctx.lineWidth = 1;
       ctx.strokeRect(10.5, y + 0.5, W - 21, 29);
       txt((i + 1) + '位', 18, y + 8, 11, hl ? '#f7e29c' : '#201810', 'left', false);
-      txt(String(r.score), 56, y + 8, 11, hl ? '#f7e29c' : '#201810', 'left', false);
-      txt('C' + r.combo, 132, y + 8, 10, hl ? '#e8dcc6' : '#5c5145', 'left', false);
-      txt(rankOf(r.score), W - 16, y + 8, 10, hl ? '#f7e29c' : '#201810', 'right', false);
+      txt(rankingName(r.name), 56, y + 8, 10, hl ? '#f7e29c' : '#201810', 'left', false);
+      txt(String(r.score), W - 16, y + 8, 11, hl ? '#f7e29c' : '#201810', 'right', false);
     });
     button('もどる', W / 2 - 50, 420, 100, 24, true);
   };

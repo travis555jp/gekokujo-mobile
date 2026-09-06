@@ -15,14 +15,69 @@ function moveEnt(e, dx, dy, clamp) {
   return moved;
 }
 
-/* ================= Ranking store (swap for online later) ================= */
+/* ================= Local + online ranking store ================= */
 const RankingStore = {
   key: 'gekokujo_ranking_v1',
+  nameKey: 'gekokujo_player_name_v1',
   load() { try { const r = JSON.parse(localStorage.getItem(this.key) || '[]'); return Array.isArray(r) ? r : []; } catch (e) { return []; } },
   save(list) { try { localStorage.setItem(this.key, JSON.stringify(list)); } catch (e) {} },
+  loadName() { try { return localStorage.getItem(this.nameKey) || ''; } catch (e) { return ''; } },
+  normalizeName(name) {
+    return String(name || '').normalize('NFKC').replace(/[\u0000-\u001f\u007f]/g, '').trim().slice(0, 12);
+  },
+  askName() {
+    const old = this.loadName();
+    if (old) return old;
+    const entered = window.prompt('ランキングに登録する名前（12文字まで）', '名無し');
+    const name = this.normalizeName(entered === null ? old : entered) || '名無し';
+    try { localStorage.setItem(this.nameKey, name); } catch (e) {}
+    return name;
+  },
   add(entry) {
-    const l = this.load(); l.push(entry); l.sort((a, b) => b.score - a.score);
-    const top = l.slice(0, 10); this.save(top); return top.indexOf(entry);
+    const online = window.OnlineRanking && OnlineRanking.configured;
+    const name = online ? this.askName() : (this.loadName() || '自分');
+    const localEntry = { ...entry, name };
+    const l = this.load(); l.push(localEntry); l.sort((a, b) => b.score - a.score);
+    const top = l.slice(0, 10); this.save(top);
+    G.onlineStatus = online ? 'sending' : 'setup';
+    this.submit(entry, name);
+    return top.indexOf(localEntry);
+  },
+  async submit(entry, name) {
+    if (!window.OnlineRanking || !OnlineRanking.configured) return;
+    try {
+      const saved = await OnlineRanking.submit({ ...entry, name });
+      const [ranking, place] = await Promise.all([
+        OnlineRanking.top(10),
+        OnlineRanking.place(entry.score)
+      ]);
+      G.ranking = ranking;
+      G.onlineStatus = 'sent';
+      if (G.result) {
+        G.result.onlineStatus = 'sent';
+        G.result.onlineId = saved && saved.id;
+        G.result.onlineName = name;
+        G.result.onlinePlace = place;
+      }
+    } catch (e) {
+      G.onlineStatus = 'error';
+      if (G.result) G.result.onlineStatus = 'error';
+    }
+  },
+  async refresh() {
+    G.ranking = this.load();
+    if (!window.OnlineRanking || !OnlineRanking.configured) {
+      G.rankingStatus = 'setup';
+      return;
+    }
+    G.rankingStatus = 'loading';
+    try {
+      G.ranking = await OnlineRanking.top(10);
+      G.rankingStatus = 'online';
+    } catch (e) {
+      G.ranking = this.load();
+      G.rankingStatus = 'offline';
+    }
   }
 };
 function estRank(s) { return Math.max(1, Math.round(100000 / Math.pow(1 + s / 2000, 2))); }
@@ -78,7 +133,7 @@ cv.addEventListener('pointerdown', e => {
 });
 
 /* ================= Game state ================= */
-const G = { state: 'title', frame: 0, sel: 0, ranking: [], result: null };
+const G = { state: 'title', frame: 0, sel: 0, ranking: [], rankingStatus: 'local', onlineStatus: 'idle', result: null };
 const EDEF = {
   ashigaru: { hp: 2, spd: 0.7, score: 100 },
   samurai: { hp: 8, spd: 0.42, score: 300 },
@@ -96,7 +151,7 @@ function newGame(ci) {
   const C = CHARS[ci === undefined ? G.charSel || 0 : ci]; G.charSel = CHARS.indexOf(C);
   input.attack = false; input.sx = 0; input.sy = 0; stickId = null; atkId = null; knobEl.style.transform = '';
   Object.assign(G, {
-    state: 'playing', time: 0, score: 0, kills: 0, stageKills: 0, stage: 1,
+    state: 'playing', time: 0, score: 0, kills: 0, stageKills: 0, stage: 1, onlineStatus: 'idle',
     combo: 0, comboTimer: 0, maxCombo: 0, gauge: 0, noKill: 0, mode: false, modeTimer: 0, modeBanner: 0,
     enemies: [], scythes: [], ebullets: [], items: [], particles: [], popups: [], flyers: [], slashes: [],
     boss: null, tsuji: null, tsTimer: 60 * 50, spawnT: 30, shake: 0, flash: 0, msg: null, cmsg: null, clearT: 0,

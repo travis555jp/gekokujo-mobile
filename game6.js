@@ -20,7 +20,7 @@ function menuKey(code) {
   }
 }
 function menuSelect(i) {
-  if (i === 0) { G.state = 'select'; G.charSel = G.charSel || 0; } else if (i === 1) G.state = 'howto'; else { G.ranking = RankingStore.load(); G.state = 'ranking'; }
+  if (i === 0) { G.state = 'select'; G.charSel = G.charSel || 0; } else if (i === 1) G.state = 'howto'; else { G.state = 'ranking'; RankingStore.refresh(); }
 }
 function menuClick(x, y) {
   if (G.state === 'title') {
