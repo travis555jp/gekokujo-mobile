@@ -42,21 +42,15 @@
 
   function audioPause24() {
     try {
-      if (typeof SFX !== 'undefined' && SFX.ac && SFX.ac.state === 'running') {
-        SFX.ac.suspend();
-      }
+      if (typeof SFX !== 'undefined' && SFX.ac && SFX.ac.state === 'running') SFX.ac.suspend();
     } catch (e) {}
   }
 
   async function audioResume24() {
     try {
       if (typeof SFX !== 'undefined') SFX.init();
-      if (typeof SFX !== 'undefined' && SFX.ac && SFX.ac.state === 'suspended') {
-        await SFX.ac.resume();
-      }
-      if (typeof BGM !== 'undefined' && BGM.started && SFX.ac) {
-        BGM.nextTime = SFX.ac.currentTime + 0.04;
-      }
+      if (typeof SFX !== 'undefined' && SFX.ac && SFX.ac.state === 'suspended') await SFX.ac.resume();
+      if (typeof BGM !== 'undefined' && BGM.started && SFX.ac) BGM.nextTime = SFX.ac.currentTime + 0.04;
     } catch (e) {}
   }
 
@@ -68,15 +62,12 @@
       if (typeof atkId !== 'undefined') atkId = null;
       if (typeof stickId !== 'undefined') stickId = null;
       if (typeof knobEl !== 'undefined' && knobEl) knobEl.style.transform = '';
-      if (typeof keys !== 'undefined') {
-        for (const k of Object.keys(keys)) keys[k] = false;
-      }
+      if (typeof keys !== 'undefined') for (const k of Object.keys(keys)) keys[k] = false;
     } catch (e) {}
   }
 
   function setPaused24(paused) {
     if (typeof G === 'undefined') return;
-
     if (paused) {
       if (G.state !== 'playing' && G.state !== 'clear') return;
       stateBeforePause24 = G.state;
@@ -103,17 +94,28 @@
     else if (G.state === 'playing' || G.state === 'clear') setPaused24(true);
   }
 
-  ['pointerdown', 'touchstart', 'touchend', 'click'].forEach(type => {
-    pauseBtn24.addEventListener(type, e => {
-      e.preventDefault();
-      e.stopPropagation();
-      if (type === 'pointerdown' || type === 'touchstart') togglePause24();
+  function stopPauseEvent24(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  // Use one primary input path only, so iOS does not fire both pointer + touch toggles.
+  if ('PointerEvent' in window) {
+    pauseBtn24.addEventListener('pointerdown', e => {
+      stopPauseEvent24(e);
+      togglePause24();
     }, { passive: false });
-  });
+  } else {
+    pauseBtn24.addEventListener('touchstart', e => {
+      stopPauseEvent24(e);
+      togglePause24();
+    }, { passive: false });
+  }
+  pauseBtn24.addEventListener('click', stopPauseEvent24, { passive: false });
+  pauseBtn24.addEventListener('touchend', stopPauseEvent24, { passive: false });
 
   addEventListener('keydown', e => {
-    if ((e.code === 'KeyP' || e.code === 'Escape') &&
-        typeof G !== 'undefined' &&
+    if ((e.code === 'KeyP' || e.code === 'Escape') && typeof G !== 'undefined' &&
         (G.state === 'playing' || G.state === 'clear' || G.state === 'paused')) {
       e.preventDefault();
       e.stopPropagation();
@@ -164,9 +166,7 @@
   };
 
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden && typeof G !== 'undefined' && (G.state === 'playing' || G.state === 'clear')) {
-      setPaused24(true);
-    }
+    if (document.hidden && typeof G !== 'undefined' && (G.state === 'playing' || G.state === 'clear')) setPaused24(true);
   });
 
   if (typeof newGame === 'function') {
