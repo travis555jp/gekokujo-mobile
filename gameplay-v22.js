@@ -11,6 +11,7 @@
   const POWER_MAX = 6;
   const HAND_MAX = 6;
 
+  // UI: attack button without the label.
   const atkEl22 = document.getElementById('atk');
   if (atkEl22) {
     atkEl22.textContent = '';
@@ -19,17 +20,31 @@
     atkEl22.style.boxShadow = 'inset 0 0 0 2px rgba(255,255,255,.12), 0 2px 8px rgba(0,0,0,.22)';
   }
 
+  // Character identity: stats + attack role.
   const charTuning = {
-    farmer: { hp: 7, spd: 1.42, cd: 16, dmg: 1, attack22: 'fan', desc: ['広い扇状攻撃で安定', 'HP 7 / 範囲 広 / 連射 中'] },
-    hunter: { hp: 4, spd: 1.80, cd: 10, dmg: 1, attack22: 'pierce', desc: ['高速の貫通射撃', 'HP 4 / 速さ 高 / 連射 最高'] },
-    yamaotoko: { hp: 8, spd: 1.15, cd: 25, dmg: 3, attack22: 'smash', desc: ['近距離の重い衝撃波', 'HP 8 / 速さ 低 / 威力 最高'] },
-    ronin: { hp: 5, spd: 1.55, cd: 18, dmg: 2, attack22: 'slash', desc: ['前方を薙ぐ連続斬撃', 'HP 5 / 貫通 / 威力 高'] }
+    farmer: {
+      hp: 7, spd: 1.42, cd: 16, dmg: 1, attack22: 'fan',
+      desc: ['広い扇状攻撃で安定', 'HP 7 / 範囲 広 / 連射 中']
+    },
+    hunter: {
+      hp: 4, spd: 1.80, cd: 10, dmg: 1, attack22: 'pierce',
+      desc: ['高速の貫通射撃', 'HP 4 / 速さ 高 / 連射 最高']
+    },
+    yamaotoko: {
+      hp: 8, spd: 1.15, cd: 25, dmg: 3, attack22: 'smash',
+      desc: ['近距離の重い衝撃波', 'HP 8 / 速さ 低 / 威力 最高']
+    },
+    ronin: {
+      hp: 5, spd: 1.55, cd: 18, dmg: 2, attack22: 'slash',
+      desc: ['前方を薙ぐ連続斬撃', 'HP 5 / 貫通 / 威力 高']
+    }
   };
   for (const c of CHARS) Object.assign(c, charTuning[c.id] || {});
 
   ITEM_NAME.kama = '白強化！手数UP';
   ITEM_NAME.akakama = '赤強化！威力UP';
 
+  // Bridge: widen every river bridge from 1 tile to 2 tiles (32px).
   const buildMapBefore22 = buildMap;
   function widenAndPaintBridges22() {
     const originals = [];
@@ -78,6 +93,7 @@
     widenAndPaintBridges22();
   };
 
+  // Player projectiles / attack patterns.
   const originalScythe22 = SPR.scythe;
   const originalScytheRed22 = SPR.scytheRed;
 
@@ -130,40 +146,61 @@
     const red = (p.power || 1) > 1;
 
     if (c.attack22 === 'pierce') {
+      // Hunter: very fast, narrow, always piercing. Hand upgrades increase 1 -> 3 lanes.
       const count = Math.min(3, 1 + Math.floor((hand - 1) / 2));
       for (const o of spread22(count, 0.09)) {
         const a = base + o;
-        G.scythes.push({ x: p.x, y: p.y, vx: Math.cos(a) * 6.4, vy: Math.sin(a) * 6.4, life: 72, rot: a, pierce: true, dmg, hits: new Set(), red, r: 8, v22Kind: 'hunter' });
+        G.scythes.push({
+          x: p.x, y: p.y, vx: Math.cos(a) * 6.4, vy: Math.sin(a) * 6.4,
+          life: 72, rot: a, pierce: true, dmg,
+          hits: new Set(), red, r: 8, v22Kind: 'hunter'
+        });
       }
       return;
     }
 
     if (c.attack22 === 'smash') {
+      // Mountain man: short-range, thick shock waves. Hand upgrades increase width.
       const count = Math.min(3, 1 + Math.floor((hand - 1) / 2));
       for (const o of spread22(count, 0.34)) {
         const a = base + o;
-        G.scythes.push({ x: p.x, y: p.y, vx: Math.cos(a) * 2.25, vy: Math.sin(a) * 2.25, life: G.mode ? 24 : 18, rot: a, pierce: true, dmg: dmg + 1, hits: new Set(), red, kind: 'slash', r: 24, v22Kind: 'smash' });
+        G.scythes.push({
+          x: p.x, y: p.y, vx: Math.cos(a) * 2.25, vy: Math.sin(a) * 2.25,
+          life: G.mode ? 24 : 18, rot: a, pierce: true, dmg: dmg + 1,
+          hits: new Set(), red, kind: 'slash', r: 24, v22Kind: 'smash'
+        });
       }
       G.shake = Math.max(G.shake, 2.5);
       return;
     }
 
     if (c.attack22 === 'slash') {
+      // Ronin: forward fan of piercing sword waves, up to 5 blades.
       const count = Math.min(5, 1 + Math.floor((hand - 1) * 0.8));
       for (const o of spread22(count, 0.16)) {
         const a = base + o;
-        G.scythes.push({ x: p.x, y: p.y, vx: Math.cos(a) * 3.6, vy: Math.sin(a) * 3.6, life: G.mode ? 27 : 20, rot: a, pierce: true, dmg, hits: new Set(), red, kind: 'slash', r: 18, v22Kind: 'ronin' });
+        G.scythes.push({
+          x: p.x, y: p.y, vx: Math.cos(a) * 3.6, vy: Math.sin(a) * 3.6,
+          life: G.mode ? 27 : 20, rot: a, pierce: true, dmg,
+          hits: new Set(), red, kind: 'slash', r: 18, v22Kind: 'ronin'
+        });
       }
       return;
     }
 
+    // Farmer: broad fan. White upgrades directly add projectiles up to 6.
     const count = hand;
     for (const o of spread22(count, count > 4 ? 0.15 : 0.18)) {
       const a = base + o;
-      G.scythes.push({ x: p.x, y: p.y, vx: Math.cos(a) * 4.15, vy: Math.sin(a) * 4.15, life: 54, rot: 0, pierce: G.mode, dmg, hits: new Set(), red, r: 10, v22Kind: 'farmer' });
+      G.scythes.push({
+        x: p.x, y: p.y, vx: Math.cos(a) * 4.15, vy: Math.sin(a) * 4.15,
+        life: 54, rot: 0, pierce: G.mode, dmg,
+        hits: new Set(), red, r: 10, v22Kind: 'farmer'
+      });
     }
   };
 
+  // Upgrade extension: the core handles Lv1->3; v22 handles Lv3->6.
   const updateGameBefore22 = updateGame;
   function handleHighLevelPickups22() {
     const p = G.p;
@@ -173,6 +210,7 @@
 
       if (it.type === 'kama' && p.scythes >= 3) {
         it.life = 0;
+        it.v22Consumed = true;
         SFX.play('item');
         if (p.scythes < HAND_MAX) {
           p.scythes++;
@@ -184,6 +222,7 @@
         burst(it.x, it.y, '#bffaff', 8, 2);
       } else if (it.type === 'akakama' && p.power >= 3) {
         it.life = 0;
+        it.v22Consumed = true;
         SFX.play('item');
         if (p.power < POWER_MAX) {
           p.power++;
@@ -195,12 +234,17 @@
         burst(it.x, it.y, '#ff9a9a', 8, 2);
       }
     }
+    G.items = G.items.filter(it => !it.v22Consumed);
   }
   updateGame = function() {
     handleHighLevelPickups22();
     updateGameBefore22();
+    for (const s of G.scythes || []) {
+      if (s.v22Kind === 'hunter') s.rot = Math.atan2(s.vy, s.vx);
+    }
   };
 
+  // Daikan: clearer bullets and charge telegraph.
   function makeBossBullet22() {
     const c = document.createElement('canvas');
     c.width = 12; c.height = 12;
@@ -215,6 +259,7 @@
   }
   SPR.bullet = makeBossBullet22();
 
+  // Draw hooks: hunter projectile visual + boss telegraphs + smash shock.
   const drawBefore22 = draw;
   draw = function() {
     const oldS = SPR.scythe, oldR = SPR.scytheRed;
@@ -235,6 +280,7 @@
 
     ctx.save();
 
+    // Readable halo + trail for boss fan bullets.
     for (const q of G.ebullets || []) {
       if (q.kind !== 'bullet') continue;
       const sx = q.x - (G.camX || 0);
@@ -252,6 +298,7 @@
       ctx.stroke();
     }
 
+    // Charge telegraph: pulsing magenta + white rings.
     const b = G.boss;
     if (b && b.state === 'charge') {
       const sx = b.x - (G.camX || 0);
@@ -275,6 +322,7 @@
       }
     }
 
+    // Mountain-man shockwave accent.
     if (G?.chr?.attack22 === 'smash') {
       for (const s of G.scythes || []) {
         if (s.v22Kind !== 'smash') continue;
@@ -290,6 +338,7 @@
     ctx.restore();
   };
 
+  // Keep the in-game explanation consistent with the new mechanics.
   drawHowto = function() {
     drawPaperBg();
     txt('遊び方', W / 2, 14, 23, '#201810', 'center', false);
@@ -311,6 +360,7 @@
     button('もどる', W / 2 - 50, 420, 100, 24, true);
   };
 
+  // Rebuild once so the current map gets the widened bridges too.
   setTimeout(() => {
     try { if (typeof G !== 'undefined') buildMap(G.stage || 1); } catch (e) {}
   }, 80);
